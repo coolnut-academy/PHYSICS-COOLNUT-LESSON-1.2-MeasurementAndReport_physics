@@ -50,6 +50,11 @@
       text-rendering: optimizeLegibility;
     }
 
+    html.exam-locked,
+    body.exam-locked {
+      overscroll-behavior-y: none;
+    }
+
     .math-font {
       font-family: 'Sarabun', sans-serif;
     }
@@ -188,6 +193,8 @@
     .measurement-figure {
       position: relative;
       cursor: zoom-in;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       transition: transform 140ms ease, box-shadow 140ms ease;
     }
 
@@ -214,6 +221,10 @@
       width: min(1120px, 175vw);
       max-width: none;
       height: auto;
+    }
+
+    body.exam-locked header {
+      position: static !important;
     }
 
     .shadow-sm {
@@ -322,6 +333,8 @@
     @media (max-width: 640px) {
       main {
         padding-top: 1.25rem !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
       }
 
       header h1 {
@@ -331,6 +344,31 @@
 
       main .rounded-2xl {
         border-radius: 14px;
+      }
+
+      .measurement-figure svg {
+        min-width: 720px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .measurement-figure svg {
+        min-width: 680px;
+      }
+    }
+
+    @media (max-height: 430px) and (orientation: landscape) {
+      header .max-w-6xl {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+      }
+
+      header h1 {
+        font-size: 1rem !important;
+      }
+
+      header p {
+        display: none;
       }
     }
 
@@ -718,7 +756,7 @@
               <div class="absolute -left-[31px] top-1 bg-indigo-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold">3</div>
               <h5 class="font-bold text-slate-800 mb-1">ปรับแต่งเลขนัยสำคัญของค่าความคลาดเคลื่อนก่อน</h5>
               <div class="bg-amber-50 text-amber-900 p-3 rounded-lg border border-amber-100 text-xs mt-1 leading-relaxed">
-                ⚠️ <strong>กติกาสากล:</strong> ค่าความคลาดเคลื่อน $\Delta \bar{x}$ ต้องถูกปัดให้มี <strong>เลขนัยสำคัญ 1 ตัวเท่านั้น</strong> (เช่น หากคำนวณได้ $0.035$ ปัดเป็น $0.04$, หากคำนวณได้ $0.15$ ปัดเป็น $0.2$)
+                ⚠️ <strong>กติกาสากล:</strong> ค่าความคลาดเคลื่อน $\Delta \bar{x}$ ต้องถูกปัดให้มี <strong>เลขนัยสำคัญ 1 ตัวเท่านั้น</strong> และกรณีเลขถัดไปเป็น 5 พอดี ให้ใช้หลัก <strong>ปัดครึ่งให้เป็นเลขคู่</strong> (เช่น $0.035 \rightarrow 0.04$, $0.025 \rightarrow 0.02$)
               </div>
             </div>
             <!-- Step 4 -->
@@ -766,7 +804,7 @@
                   <td class="px-4 py-3.5 font-semibold text-slate-900">4. ปรับเลขนัยสำคัญ</td>
                   <td class="px-4 py-3.5">
                     $\Delta \bar{x} = 0.03$ (มีเลขนัยสำคัญ 1 ตัวอยู่แล้ว, ทศนิยม 2 ตำแหน่ง)<br>
-                    ปัดค่าเฉลี่ยกลางให้เหลือทศนิยม 2 ตำแหน่ง: $1.845 \rightarrow 1.84$
+                    ปัดค่าเฉลี่ยกลางให้เหลือทศนิยม 2 ตำแหน่งด้วยหลักปัดครึ่งให้เป็นเลขคู่: $1.845 \rightarrow 1.84$
                   </td>
                   <td class="px-4 py-3.5 text-blue-600 font-bold">$1.84 \pm 0.03 \text{ cm}$</td>
                 </tr>
@@ -836,19 +874,19 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-semibold text-slate-500 mb-1">ค่ากลาง $x$ (ใส่เฉพาะตัวเลข):</label>
-              <input type="number" step="any" id="prac-input-mean" placeholder="ตัวอย่าง: 1.84" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input type="text" inputmode="decimal" autocomplete="off" id="prac-input-mean" placeholder="ตัวอย่าง: 1.84" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-500 mb-1">ค่าความคลาดเคลื่อน $\Delta x$ (ใส่เฉพาะตัวเลข):</label>
-              <input type="number" step="any" id="prac-input-unc" placeholder="ตัวอย่าง: 0.03" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input type="text" inputmode="decimal" autocomplete="off" id="prac-input-unc" placeholder="ตัวอย่าง: 0.03" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
           </div>
 
-          <div class="flex gap-3 pt-2">
-            <button onclick="checkPracticeAnswer()" class="flex-1 md:flex-none px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm transition duration-150">
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button onclick="checkPracticeAnswer()" class="w-full sm:w-auto sm:flex-1 md:flex-none px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm transition duration-150">
               ตรวจคำตอบ
             </button>
-            <button onclick="regeneratePractice()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition duration-150">
+            <button onclick="regeneratePractice()" class="w-full sm:w-auto px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition duration-150">
               ข้าม / สุ่มโจทย์ใหม่
             </button>
           </div>
@@ -931,14 +969,14 @@
     <!-- ---------------------------------------------------- -->
     <section id="sec-exam-live" class="hidden space-y-6 relative animate-fade-in">
       <!-- Sticky Sticky Timer bar -->
-      <div class="sticky top-2 z-30 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-md flex items-center justify-between border border-slate-700">
-        <div class="flex items-center gap-2">
+      <div class="sticky top-2 z-30 bg-slate-900 text-white px-3 md:px-4 py-3 rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-slate-700">
+        <div class="flex items-center gap-2 min-w-0">
           <i class="fa-solid fa-user-pen text-indigo-400"></i>
-          <span class="text-xs md:text-sm text-slate-300 font-medium">
+          <span class="text-xs md:text-sm text-slate-300 font-medium truncate">
             ผู้เข้าสอบ: <strong class="text-white" id="lbl-exam-user-info">-</strong>
           </span>
         </div>
-        <div class="flex items-center gap-2 font-bold text-rose-400 text-sm md:text-base">
+        <div class="flex items-center gap-2 font-bold text-rose-400 text-base md:text-lg">
           <i class="fa-solid fa-clock animate-pulse"></i>
           <span>เวลาที่เหลือ: <span id="exam-timer-display" class="font-mono">05:00</span></span>
         </div>
@@ -957,11 +995,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
           <div>
             <label class="block text-xs font-semibold text-slate-500 mb-1">ค่ากลาง $x$ ที่คุณรายงาน:</label>
-            <input type="number" step="any" id="exam-q1-mean" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
+            <input type="text" inputmode="decimal" autocomplete="off" id="exam-q1-mean" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-500 mb-1">ค่าความคลาดเคลื่อน $\Delta x$:</label>
-            <input type="number" step="any" id="exam-q1-unc" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
+            <input type="text" inputmode="decimal" autocomplete="off" id="exam-q1-unc" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
           </div>
         </div>
       </div>
@@ -978,11 +1016,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
           <div>
             <label class="block text-xs font-semibold text-slate-500 mb-1">ค่ากลาง $\bar{x}$ ที่คุณรายงาน:</label>
-            <input type="number" step="any" id="exam-q2-mean" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
+            <input type="text" inputmode="decimal" autocomplete="off" id="exam-q2-mean" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-500 mb-1">ค่าความคลาดเคลื่อน $\Delta \bar{x}$:</label>
-            <input type="number" step="any" id="exam-q2-unc" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
+            <input type="text" inputmode="decimal" autocomplete="off" id="exam-q2-unc" placeholder="กรอกตัวเลขทศนิยม" class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm">
           </div>
         </div>
       </div>
@@ -1027,9 +1065,12 @@
             </div>
           </div>
 
-          <div class="text-center md:text-left space-y-1 max-w-xs">
-            <h4 class="text-slate-500 text-xs font-bold uppercase">การวิเคราะห์ผลตอบสนอง</h4>
-            <p id="lbl-res-time-elapsed" class="text-sm font-semibold text-slate-700">ใช้เวลาไปทั้งหมด: -</p>
+          <div class="text-center md:text-left space-y-2 max-w-sm bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 shadow-sm">
+            <h4 class="text-rose-700 text-sm md:text-base font-extrabold uppercase tracking-wide flex items-center justify-center md:justify-start gap-2">
+              <i class="fa-solid fa-triangle-exclamation"></i> การวิเคราะห์ผลตอบสนอง
+            </h4>
+            <p id="lbl-res-time-elapsed" class="text-base md:text-lg font-extrabold text-rose-950">ใช้เวลาไปทั้งหมด: -</p>
+            <p id="lbl-res-finished-at" class="text-base md:text-lg font-extrabold text-rose-700">ส่งข้อสอบเมื่อ: -</p>
             <p id="lbl-res-badge-feedback" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 font-semibold leading-relaxed">
               - รอการคำนวณ -
             </p>
@@ -1169,7 +1210,244 @@
     let currentExamData = null; // Stored randomized exam data
     let examTimerInterval = null;
     let examTimeRemaining = 300; // 5 minutes (300 seconds)
+    const EXAM_DURATION_SECONDS = 300;
+    const EXAM_STATE_KEY = 'active_exam_session';
+    let examStartTimestamp = null;
+    let examDeadlineTimestamp = null;
+    let examIsActive = false;
+    let examSubmissionInProgress = false;
     let examStudentInfo = {};
+    let examExitGuardEnabled = false;
+    let examTouchStartY = 0;
+
+    function formatExamTime(seconds) {
+      const safeSeconds = Math.max(0, Math.floor(seconds));
+      const minutes = Math.floor(safeSeconds / 60).toString().padStart(2, '0');
+      const remainingSeconds = (safeSeconds % 60).toString().padStart(2, '0');
+      return `${minutes}:${remainingSeconds}`;
+    }
+
+    function formatThaiDateTimeBuddhistEra(date = new Date()) {
+      return new Intl.DateTimeFormat('th-TH-u-ca-buddhist', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(date);
+    }
+
+    function getCurrentExamRemainingSeconds() {
+      if (!examDeadlineTimestamp) {
+        return examTimeRemaining;
+      }
+      return Math.max(0, Math.ceil((examDeadlineTimestamp - Date.now()) / 1000));
+    }
+
+    function getCurrentExamAnswers() {
+      return {
+        q1Mean: document.getElementById('exam-q1-mean').value,
+        q1Unc: document.getElementById('exam-q1-unc').value,
+        q2Mean: document.getElementById('exam-q2-mean').value,
+        q2Unc: document.getElementById('exam-q2-unc').value
+      };
+    }
+
+    function restoreExamAnswers(answers) {
+      if (!answers) return;
+      document.getElementById('exam-q1-mean').value = answers.q1Mean || '';
+      document.getElementById('exam-q1-unc').value = answers.q1Unc || '';
+      document.getElementById('exam-q2-mean').value = answers.q2Mean || '';
+      document.getElementById('exam-q2-unc').value = answers.q2Unc || '';
+    }
+
+    function persistExamSession() {
+      if (!examIsActive || !currentExamData || !examStartTimestamp || !examDeadlineTimestamp) {
+        return;
+      }
+
+      const payload = {
+        examData: currentExamData,
+        studentInfo: examStudentInfo,
+        examStartTimestamp,
+        examDeadlineTimestamp,
+        answers: getCurrentExamAnswers()
+      };
+
+      sessionStorage.setItem(EXAM_STATE_KEY, JSON.stringify(payload));
+    }
+
+    function clearExamSession() {
+      sessionStorage.removeItem(EXAM_STATE_KEY);
+    }
+
+    function stopExamExitGuard() {
+      if (!examExitGuardEnabled) return;
+      window.removeEventListener('beforeunload', handleExamBeforeUnload);
+      window.removeEventListener('popstate', handleExamPopState);
+      window.removeEventListener('keydown', handleExamKeydown, true);
+      window.removeEventListener('touchstart', handleExamTouchStart);
+      window.removeEventListener('touchmove', handleExamTouchMove);
+      document.documentElement.classList.remove('exam-locked');
+      document.body.classList.remove('exam-locked');
+      examExitGuardEnabled = false;
+    }
+
+    function startExamExitGuard() {
+      if (examExitGuardEnabled) return;
+      window.addEventListener('beforeunload', handleExamBeforeUnload);
+      window.addEventListener('popstate', handleExamPopState);
+      window.addEventListener('keydown', handleExamKeydown, true);
+      window.addEventListener('touchstart', handleExamTouchStart, { passive: true });
+      window.addEventListener('touchmove', handleExamTouchMove, { passive: false });
+      document.documentElement.classList.add('exam-locked');
+      document.body.classList.add('exam-locked');
+      examExitGuardEnabled = true;
+    }
+
+    function handleExamBeforeUnload(event) {
+      if (!examIsActive) return;
+      persistExamSession();
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    }
+
+    function handleExamPopState() {
+      if (!examIsActive) return;
+      history.pushState({ examLock: true }, '', location.href);
+      triggerAlert("กำลังสอบอยู่", "ระบบล็อกการย้อนกลับไว้ระหว่างทำข้อสอบ เพื่อป้องกันการหลุดจากการสอบโดยไม่ตั้งใจ", "fa-ban", "bg-amber-100 text-amber-600");
+      showSection('exam-live');
+    }
+
+    function handleExamKeydown(event) {
+      if (!examIsActive) return;
+      const key = event.key.toLowerCase();
+      const blocked = event.key === 'F5' || ((event.ctrlKey || event.metaKey) && key === 'r') || (event.altKey && key === 'arrowleft');
+
+      if (blocked) {
+        event.preventDefault();
+        event.stopPropagation();
+        triggerAlert("กำลังสอบอยู่", "ระบบปิดการรีเฟรชและย้อนหน้าไว้ชั่วคราว เพื่อให้เวลาสอบเดินต่อเนื่องตลอด 5 นาที", "fa-lock", "bg-amber-100 text-amber-600");
+      }
+    }
+
+    function handleExamTouchStart(event) {
+      if (!examIsActive || !event.touches || event.touches.length !== 1) return;
+      examTouchStartY = event.touches[0].clientY;
+    }
+
+    function handleExamTouchMove(event) {
+      if (!examIsActive || !event.touches || event.touches.length !== 1) return;
+
+      const currentY = event.touches[0].clientY;
+      const pullingDownFromTop = window.scrollY <= 0 && currentY > examTouchStartY + 8;
+
+      if (pullingDownFromTop) {
+        event.preventDefault();
+      }
+    }
+
+    function startExamTimer() {
+      clearInterval(examTimerInterval);
+
+      const updateTimer = () => {
+        if (!examIsActive) return;
+
+        examTimeRemaining = getCurrentExamRemainingSeconds();
+        document.getElementById('exam-timer-display').innerText = formatExamTime(examTimeRemaining);
+
+        if (examTimeRemaining < 60) {
+          document.getElementById('exam-timer-display').classList.add('text-rose-500');
+        } else {
+          document.getElementById('exam-timer-display').classList.remove('text-rose-500');
+        }
+
+        persistExamSession();
+
+        if (examTimeRemaining <= 0) {
+          clearInterval(examTimerInterval);
+          examTimeRemaining = 0;
+          document.getElementById('exam-timer-display').innerText = "00:00";
+          triggerAlert("หมดเวลาแล้ว!", "เวลาสอบ 5 นาทีของคุณได้สิ้นสุดลงแล้ว ระบบจะส่งข้อสอบและสรุปประเมินให้ทันทีอัตโนมัติ", "fa-hourglass-end", "bg-rose-100 text-rose-600");
+          submitExam(true);
+        }
+      };
+
+      updateTimer();
+      examTimerInterval = setInterval(updateTimer, 250);
+    }
+
+    function initializeExamSession(examData, studentInfo) {
+      currentExamData = examData;
+      examStudentInfo = studentInfo;
+      examStartTimestamp = Date.now();
+      examDeadlineTimestamp = examStartTimestamp + (EXAM_DURATION_SECONDS * 1000);
+      examTimeRemaining = EXAM_DURATION_SECONDS;
+      examIsActive = true;
+      examSubmissionInProgress = false;
+      startExamExitGuard();
+      history.pushState({ examLock: true }, '', location.href);
+      persistExamSession();
+      startExamTimer();
+    }
+
+    function restoreActiveExamSession() {
+      const saved = sessionStorage.getItem(EXAM_STATE_KEY);
+      if (!saved) return false;
+
+      try {
+        const parsed = JSON.parse(saved);
+        if (!parsed || !parsed.examData || !parsed.studentInfo || !parsed.examDeadlineTimestamp) {
+          return false;
+        }
+
+        currentExamData = parsed.examData;
+        examStudentInfo = parsed.studentInfo;
+        examStartTimestamp = parsed.examStartTimestamp || (parsed.examDeadlineTimestamp - (EXAM_DURATION_SECONDS * 1000));
+        examDeadlineTimestamp = parsed.examDeadlineTimestamp;
+        examIsActive = true;
+        examSubmissionInProgress = false;
+
+        document.getElementById('lbl-exam-user-info').innerText = `${examStudentInfo.name} (ม.4/${examStudentInfo.class} เลขที่ ${examStudentInfo.number})`;
+        document.getElementById('exam-q1-text').innerText = `ดูภาพสเกลด้านล่างแล้วรายงานผลการวัดในรูป x ± Δx (หน่วย ${currentExamData.q1.unit})`;
+        document.getElementById('exam-q2-text').innerText = currentExamData.q2.questionText;
+        renderSingleMeasurementFigure(currentExamData.q1, 'exam-q1-figure');
+        restoreExamAnswers(parsed.answers);
+        showSection('exam-live');
+
+        const remaining = getCurrentExamRemainingSeconds();
+        examTimeRemaining = remaining;
+        document.getElementById('exam-timer-display').innerText = formatExamTime(remaining);
+        document.getElementById('exam-timer-display').classList.toggle('text-rose-500', remaining < 60);
+
+        startExamExitGuard();
+
+        if (remaining <= 0) {
+          submitExam(true);
+        } else {
+          startExamTimer();
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Failed to restore exam session:', error);
+        clearExamSession();
+        return false;
+      }
+    }
+
+    function endExamSession() {
+      examIsActive = false;
+      examSubmissionInProgress = false;
+      examStartTimestamp = null;
+      examDeadlineTimestamp = null;
+      clearInterval(examTimerInterval);
+      stopExamExitGuard();
+      clearExamSession();
+    }
 
     // Helper: Render LaTeX math equations using MathJax
     function renderMath() {
@@ -1192,6 +1470,9 @@
 
       // 3. Render Math equations
       renderMath();
+
+      // 4. Restore an in-progress exam if the page was refreshed
+      restoreActiveExamSession();
     }
 
     document.addEventListener('keydown', function(event) {
@@ -1200,8 +1481,24 @@
       }
     });
 
+    document.addEventListener('input', function(event) {
+      if (!examIsActive || !event.target || !event.target.id) return;
+
+      const examAnswerInputIds = ['exam-q1-mean', 'exam-q1-unc', 'exam-q2-mean', 'exam-q2-unc'];
+      if (examAnswerInputIds.includes(event.target.id)) {
+        persistExamSession();
+      }
+    });
+
     // Helper: Navigation Router
     function showSection(sectionId) {
+      let normalizedSectionId = sectionId.startsWith('sec-') ? sectionId.slice(4) : sectionId;
+
+      if (examIsActive && normalizedSectionId !== 'exam-live' && normalizedSectionId !== 'exam-result') {
+        triggerAlert("กำลังสอบอยู่", "ระหว่างสอบระบบจะล็อกไม่ให้ย้อนกลับหรือออกจากหน้า เพื่อให้เวลาทำข้อสอบเดินต่อเนื่อง", "fa-lock", "bg-amber-100 text-amber-600");
+        normalizedSectionId = 'exam-live';
+      }
+
       const mobileMenu = document.getElementById('mobile-menu');
       if (mobileMenu) {
         mobileMenu.classList.add('hidden');
@@ -1216,15 +1513,15 @@
       document.getElementById('sec-exam-result').classList.add('hidden');
 
       // Clear intervals if navigating away from exam
-      if (sectionId !== 'sec-exam-live') {
+      if (normalizedSectionId !== 'exam-live' && !examIsActive) {
         clearInterval(examTimerInterval);
       }
 
       // Show requested section
-      const activeSec = document.getElementById('sec-' + sectionId);
+      const activeSec = document.getElementById('sec-' + normalizedSectionId);
       if (activeSec) {
         activeSec.classList.remove('hidden');
-        currentSection = sectionId;
+        currentSection = normalizedSectionId;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
@@ -1275,7 +1572,8 @@
       const badge = document.getElementById('latest-score-badge');
       if (saved) {
         const info = JSON.parse(saved);
-        document.getElementById('lbl-last-score').innerText = `${info.score} / 5 คะแนน (${info.name})`;
+        const finishedLabel = info.finishedAtDisplay || info.date || 'ไม่พบเวลาส่ง';
+        document.getElementById('lbl-last-score').innerText = `${info.score} / 5 คะแนน (${info.studentInfo?.name || info.name || '-'}) • ${finishedLabel}`;
         badge.classList.remove('hidden');
       } else {
         badge.classList.add('hidden');
@@ -1289,7 +1587,7 @@
         // Load the stored exam solutions and details into the result section
         currentExamData = info.examData;
         showSection('exam-result');
-        displayExamResults(info.score, info.q1Correct, info.q2Correct, info.timeTaken, info.studentInfo);
+        displayExamResults(info.score, info.q1Correct, info.q2Correct, info.timeTaken, info.studentInfo, info.finishedAtDisplay || info.date || '-');
       }
     }
 
@@ -1368,15 +1666,15 @@
       document.getElementById('sim-object').style.width = `${percent}%`;
 
       // Update Labels
-      document.getElementById('lbl-pencil-val').innerText = `${val.toFixed(2)} cm`;
+      document.getElementById('lbl-pencil-val').innerText = `${formatHalfEven(val, 2)} cm`;
       
-      const clearVal = Math.floor(val * 10) / 10;
-      const upperVal = clearVal + 0.1;
-      document.getElementById('lbl-clear-val').innerText = `${clearVal.toFixed(2)} cm`;
+      const clearVal = roundHalfEven(Math.floor((val / 0.1) + 1e-9) * 0.1, 6);
+      const upperVal = roundHalfEven(clearVal + 0.1, 6);
+      document.getElementById('lbl-clear-val').innerText = `${formatHalfEven(clearVal, 2)} cm`;
       
       const estVal = val - clearVal;
-      document.getElementById('lbl-est-val').innerText = `${estVal.toFixed(2)} cm`;
-      document.getElementById('lbl-bracket-ticks').innerText = `${clearVal.toFixed(2)} cm และ ${upperVal.toFixed(2)} cm`;
+      document.getElementById('lbl-est-val').innerText = `${formatHalfEven(estVal, 2)} cm`;
+      document.getElementById('lbl-bracket-ticks').innerText = `${formatHalfEven(clearVal, 2)} cm และ ${formatHalfEven(upperVal, 2)} cm`;
       document.getElementById('lbl-delta-val').innerText = `$0.05 \\text{ cm}$`;
 
       // Update Zoom View content
@@ -1386,7 +1684,7 @@
 
       // We want to show a magnified view around the current measurement tip.
       // We will place tick marks for 4 nearby minor subdivisions
-      const targetInt = Math.floor(val * 10); // e.g. 34 for 3.45 cm
+      const targetInt = Math.floor((val / 0.1) + 1e-9); // e.g. 34 for 3.45 cm
       const baseTickVal = (targetInt - 2) / 10; // start 2 ticks back
 
       for (let i = 0; i <= 4; i++) {
@@ -1399,7 +1697,7 @@
         
         const lbl = document.createElement('span');
         lbl.className = 'text-[9px] text-slate-500 font-bold -mt-4';
-        lbl.innerText = `${tickVal.toFixed(1)}`;
+        lbl.innerText = `${formatHalfEven(tickVal, 1)}`;
         tick.appendChild(lbl);
 
         zoomTicks.appendChild(tick);
@@ -1411,7 +1709,7 @@
 
       // Update Mathjax Live Preview
       const liveBox = document.getElementById('sim-live-latex');
-      liveBox.innerText = `\\[ ${val.toFixed(2)} \\pm 0.05 \\text{ cm} \\]`;
+      liveBox.innerText = `\\[ ${formatHalfEven(val, 2)} \\pm 0.05 \\text{ cm} \\]`;
 
       renderMath();
     }
@@ -1437,9 +1735,9 @@
       
       // Keep the object tip between two ticks so students really estimate from the scale.
       const dp = getDecimalPlaces(deltaX);
-      const baseTick = Math.floor((2.0 + Math.random() * 6.0) / resolution) * resolution;
-      const rawMeasuredValue = baseTick + ((0.2 + Math.random() * 0.6) * resolution);
-      const measuredValue = parseFloat(rawMeasuredValue.toFixed(dp));
+      const baseTick = roundHalfEven(Math.floor((2.0 + Math.random() * 6.0) / resolution) * resolution, 6);
+      const rawMeasuredValue = roundHalfEven(baseTick + ((0.2 + Math.random() * 0.6) * resolution), 6);
+      const measuredValue = roundHalfEven(rawMeasuredValue, dp);
 
       return {
         type: 'single',
@@ -1471,18 +1769,23 @@
       const n = 4 + Math.floor(Math.random() * 3); // 4 to 6 times
       
       let dataset = [];
-      for (let i = 0; i < n; i++) {
-        // Generates small spread (baseVal +/- 0.15)
-        const offset = -0.15 + Math.random() * 0.30;
-        dataset.push(parseFloat((baseVal + offset).toFixed(2)));
-      }
+      let spreadAttempts = 0;
+      do {
+        dataset = [];
+        for (let i = 0; i < n; i++) {
+          // Generates small spread (baseVal +/- 0.15)
+          const offset = -0.15 + Math.random() * 0.30;
+          dataset.push(roundHalfEven(baseVal + offset, 2));
+        }
+        spreadAttempts++;
+      } while (new Set(dataset).size < 2 && spreadAttempts < 20);
 
       // 35% chance to inject a distinct outlier
       let outlierInjected = false;
       let rawFullDataset = [...dataset];
       if (Math.random() < 0.35) {
         // High outlier
-        const outlier = parseFloat((baseVal + 4.5 + Math.random() * 2).toFixed(2));
+        const outlier = roundHalfEven(baseVal + 4.5 + Math.random() * 2, 2);
         rawFullDataset.push(outlier);
         outlierInjected = true;
       }
@@ -1506,7 +1809,10 @@
     // Outlier Detection (Rule 2 Compound Query forbidden, client side filtering)
     function detectOutliers(data) {
       const sorted = [...data].sort((a, b) => a - b);
-      const median = sorted[Math.floor(sorted.length / 2)];
+      const middle = Math.floor(sorted.length / 2);
+      const median = sorted.length % 2 === 0
+        ? (sorted[middle - 1] + sorted[middle]) / 2
+        : sorted[middle];
       
       const outliers = [];
       const valid = [];
@@ -1541,7 +1847,7 @@
       
       // 5. Match decimal places of mean with delta
       const dp = getDecimalPlaces(deltaFinal);
-      const meanFinal = parseFloat(meanRaw.toFixed(dp));
+      const meanFinal = roundHalfEven(meanRaw, dp);
 
       return {
         originalData: data,
@@ -1555,17 +1861,42 @@
       };
     }
 
-    // Helper: Round to exactly 1 Significant Figure
+    // Helper: Round to a fixed number of decimal places using "round half to even"
+    // Examples: 2.25 -> 2.2, 2.15 -> 2.2 when rounded to 1 decimal place.
+    function roundHalfEven(num, decimalPlaces = 0) {
+      if (!Number.isFinite(num)) return num;
+
+      const factor = Math.pow(10, decimalPlaces);
+      const sign = Math.sign(num) || 1;
+      const scaled = Math.abs(num) * factor;
+      const floor = Math.floor(scaled);
+      const fraction = scaled - floor;
+      const epsilon = 1e-10;
+
+      let roundedInteger;
+      if (fraction > 0.5 + epsilon) {
+        roundedInteger = floor + 1;
+      } else if (fraction < 0.5 - epsilon) {
+        roundedInteger = floor;
+      } else {
+        roundedInteger = floor % 2 === 0 ? floor : floor + 1;
+      }
+
+      const rounded = sign * roundedInteger / factor;
+      return decimalPlaces > 0 ? Number(rounded.toFixed(decimalPlaces)) : rounded;
+    }
+
+    function formatHalfEven(num, decimalPlaces = 0) {
+      const rounded = roundHalfEven(num, decimalPlaces);
+      return decimalPlaces > 0 ? rounded.toFixed(decimalPlaces) : rounded.toString();
+    }
+
+    // Helper: Round to exactly 1 Significant Figure using "round half to even"
     function roundTo1SigFig(num) {
       if (num === 0) return 0;
       const d = Math.ceil(Math.log10(num < 0 ? -num : num));
       const power = 1 - d;
-      const magnitude = Math.pow(10, power);
-      const shifted = Math.round(num * magnitude);
-      const rounded = shifted / magnitude;
-      
-      // Safe guard parsing issues like floating inaccuracies
-      return parseFloat(rounded.toFixed(Math.max(0, power)));
+      return roundHalfEven(num, power);
     }
 
     // Helper: Find decimal places
@@ -1575,11 +1906,44 @@
       return str.split('.')[1].length;
     }
 
+    function getTypedDecimalPlaces(valueString) {
+      const normalized = valueString.trim();
+      const match = normalized.match(/^[+-]?(?:\d+|\d*\.\d+)$/);
+      if (!match) return null;
+
+      const decimalIndex = normalized.indexOf('.');
+      return decimalIndex === -1 ? 0 : normalized.length - decimalIndex - 1;
+    }
+
+    function isNumericAnswerWithExactDecimals(valueString, targetValue, requiredDecimalPlaces) {
+      const typedDecimalPlaces = getTypedDecimalPlaces(valueString);
+      if (typedDecimalPlaces !== requiredDecimalPlaces) return false;
+
+      const numericValue = Number(valueString);
+      return Number.isFinite(numericValue) && Math.abs(numericValue - targetValue) < 1e-9;
+    }
+
+    function isSingleMeanAnswerCorrect(valueString, data) {
+      const typedDecimalPlaces = getTypedDecimalPlaces(valueString);
+      const requiredDecimalPlaces = getDecimalPlaces(data.deltaX);
+      if (typedDecimalPlaces !== requiredDecimalPlaces) return false;
+
+      const numericValue = Number(valueString);
+      return Number.isFinite(numericValue) && isSingleMeanAcceptable(numericValue, data);
+    }
+
+    function getSingleMeasurementReferenceValue(data) {
+      return Number.isFinite(data.rawMeasuredValue) ? data.rawMeasuredValue : data.measuredValue;
+    }
+
     function getSingleMeasurementBounds(data) {
-      const lower = Math.floor(data.measuredValue / data.resolution) * data.resolution;
+      const referenceValue = getSingleMeasurementReferenceValue(data);
+      const quotient = referenceValue / data.resolution;
+      const lowerTickIndex = Math.floor(quotient + 1e-9);
+      const lower = lowerTickIndex * data.resolution;
       return {
-        lower: parseFloat(lower.toFixed(6)),
-        upper: parseFloat((lower + data.resolution).toFixed(6))
+        lower: roundHalfEven(lower, 6),
+        upper: roundHalfEven(lower + data.resolution, 6)
       };
     }
 
@@ -1593,12 +1957,12 @@
 
     function getRoundingExplanation(rawValue, roundedValue, label, unit = '') {
       const direction = roundedValue > rawValue ? 'ปัดขึ้น' : roundedValue < rawValue ? 'ปัดลง' : 'ไม่ต้องปัด';
-      const reason = roundedValue === rawValue
+      const reason = Math.abs(roundedValue - rawValue) < 1e-12
         ? 'เพราะค่าดิบอยู่ในรูปที่ต้องรายงานพอดีแล้ว'
         : direction === 'ปัดขึ้น'
-          ? 'เพราะตัวเลขถัดจากตำแหน่งที่ต้องเก็บมีค่าตั้งแต่ 5 ขึ้นไป'
-          : 'เพราะตัวเลขถัดจากตำแหน่งที่ต้องเก็บมีค่าน้อยกว่า 5';
-      return `${label}: ${rawValue.toFixed(4)} ${unit} → ${roundedValue} ${unit} (${direction} ${reason})`;
+          ? 'ตามหลักปัดครึ่งให้เป็นเลขคู่ หรือกรณีมากกว่าครึ่ง'
+          : 'ตามหลักปัดครึ่งให้เป็นเลขคู่ หรือกรณีน้อยกว่าครึ่ง';
+      return `${label}: ${formatHalfEven(rawValue, 4)} ${unit} → ${roundedValue} ${unit} (${direction} ${reason})`;
     }
 
     function renderSingleMeasurementFigure(data, targetElementId, enableZoom = true) {
@@ -1607,7 +1971,7 @@
 
       const dp = getDecimalPlaces(data.deltaX);
       const resolution = data.resolution;
-      const measured = data.measuredValue;
+      const measured = getSingleMeasurementReferenceValue(data);
       const { lower, upper } = getSingleMeasurementBounds(data);
 
       let minTick = lower - (2 * resolution);
@@ -1633,7 +1997,7 @@
         const h = isBracket ? 52 : 36;
         const color = isBracket ? '#1d4ed8' : '#334155';
         tickLines += `<line x1="${x}" y1="118" x2="${x}" y2="${118 - h}" stroke="${color}" stroke-width="${isBracket ? 3 : 2}" vector-effect="non-scaling-stroke"/>`;
-        tickLabels += `<text x="${x}" y="140" text-anchor="middle" font-size="16" fill="#0f172a" font-weight="${isBracket ? 700 : 500}">${val.toFixed(dp)}</text>`;
+        tickLabels += `<text x="${x}" y="140" text-anchor="middle" font-size="16" fill="#0f172a" font-weight="${isBracket ? 700 : 500}">${formatHalfEven(val, dp)}</text>`;
       }
 
       const estDp = Math.max(dp, 2);
@@ -1655,7 +2019,7 @@
         ${tickLabels}
 
         <rect x="24" y="165" width="872" height="28" rx="6" fill="#e0f2fe" stroke="#bae6fd"/>
-        <text x="44" y="184" font-size="14" fill="#0f172a">ปลายวัตถุอยู่ระหว่าง ${lower.toFixed(dp)} และ ${upper.toFixed(dp)} ${data.unit}; ส่วนที่ต้องกะประมาณประมาณ ${estPart.toFixed(estDp)} ${data.unit}</text>
+        <text x="44" y="184" font-size="14" fill="#0f172a">ปลายวัตถุอยู่ระหว่าง ${formatHalfEven(lower, dp)} และ ${formatHalfEven(upper, dp)} ${data.unit}; ส่วนที่ต้องกะประมาณประมาณ ${formatHalfEven(estPart, estDp)} ${data.unit}</text>
       </svg>`;
 
       if (enableZoom) {
@@ -1757,8 +2121,8 @@
         return;
       }
 
-      const inputMean = parseFloat(inputMeanStr);
-      const inputUnc = parseFloat(inputUncStr);
+      const inputMean = Number(inputMeanStr);
+      const inputUnc = Number(inputUncStr);
 
       const feedback = document.getElementById('prac-feedback');
       let isCorrect = false;
@@ -1778,33 +2142,40 @@
         const maxAccepted = targetMean + tolerance;
 
         // Check closeness
-        const meanClose = isSingleMeanAcceptable(inputMean, currentPracticeData);
-        const uncClose = Math.abs(inputUnc - targetUnc) < 1e-9;
+        const meanClose = isSingleMeanAnswerCorrect(inputMeanStr, currentPracticeData);
+        const uncClose = isNumericAnswerWithExactDecimals(inputUncStr, targetUnc, dp);
 
         isCorrect = meanClose && uncClose;
         const deltaRounding = getRoundingExplanation(resolution / 2, targetUnc, 'การปัดค่าความคลาดเคลื่อน', currentPracticeData.unit);
-        const meanRounding = getRoundingExplanation(currentPracticeData.rawMeasuredValue || targetMean, parseFloat(targetMean.toFixed(dp)), 'การปัดค่าที่อ่านได้', currentPracticeData.unit);
+        const meanRounding = getRoundingExplanation(currentPracticeData.rawMeasuredValue || targetMean, roundHalfEven(targetMean, dp), 'การปัดค่าที่อ่านได้', currentPracticeData.unit);
+        const targetMeanText = formatHalfEven(targetMean, dp);
+        const targetUncText = formatHalfEven(targetUnc, dp);
+        const lowerBoundText = formatHalfEven(lowerBound, dp);
+        const upperBoundText = formatHalfEven(upperBound, dp);
+        const minAcceptedText = formatHalfEven(minAccepted, dp);
+        const maxAcceptedText = formatHalfEven(maxAccepted, dp);
+        const measuredRawText = formatHalfEven(getSingleMeasurementReferenceValue(currentPracticeData), Math.max(dp, 2));
 
         detailedExplain = `
-          <p><strong>ขั้นตอนที่ 1: อ่านค่ากลาง ($x$)</strong><br>ปลายวัตถุอยู่ระหว่าง $${lowerBound.toFixed(dp)}$ และ $${upperBound.toFixed(dp)} \\text{ ${currentPracticeData.unit}}$ จึงต้องกะประมาณตำแหน่งปลายวัตถุจากภาพ ได้ค่ามาตรฐานประมาณ $x = ${targetMean.toFixed(dp)} \\text{ ${currentPracticeData.unit}}$<br>
-          ระบบยอมรับค่ากะประมาณที่สมเหตุสมผลในช่วง ${minAccepted.toFixed(dp)} ถึง ${maxAccepted.toFixed(dp)} ${currentPracticeData.unit} เพราะจุดนี้เป็นค่าที่ต้องเดาด้วยสายตา แต่ต้องไม่หลุดจากตำแหน่งปลายวัตถุในภาพ</p>
+          <p><strong>ขั้นตอนที่ 1: อ่านค่ากลาง ($x$)</strong><br>ปลายวัตถุอยู่ระหว่าง $${lowerBoundText}$ และ $${upperBoundText} \\text{ ${currentPracticeData.unit}}$ โดยตำแหน่งจริงบนภาพอยู่ประมาณ $${measuredRawText} \\text{ ${currentPracticeData.unit}}$ เมื่อนำไปรายงานตามตำแหน่งทศนิยมที่สอดคล้องกัน จะได้ $x = ${targetMeanText} \\text{ ${currentPracticeData.unit}}$<br>
+          ระบบยอมรับค่ากะประมาณที่สมเหตุสมผลในช่วง ${minAcceptedText} ถึง ${maxAcceptedText} ${currentPracticeData.unit} เพราะจุดนี้เป็นค่าที่ต้องเดาด้วยสายตา แต่ต้องไม่หลุดจากตำแหน่งปลายวัตถุในภาพ</p>
           <p><strong>ขั้นตอนที่ 2: หาความคลาดเคลื่อน ($\\Delta x$) จากขีดสเกลคร่อมล้อมรอบค่าจริง</strong><br>
-          ขีดสเกลที่ล้อมรอบค่ากลางวัดจริง $${targetMean}$ บนเครื่องมือนี้ คือขีดสเกลล่าง $x_{\\text{ขีดล่าง}} = ${lowerBound.toFixed(dp)} \\text{ ${currentPracticeData.unit}}$ และขีดสเกลบน $x_{\\text{ขีดบน}} = ${upperBound.toFixed(dp)} \\text{ ${currentPracticeData.unit}}$<br>
+          ขีดสเกลที่ล้อมรอบปลายวัตถุจริง $${measuredRawText}$ บนเครื่องมือนี้ คือขีดสเกลล่าง $x_{\\text{ขีดล่าง}} = ${lowerBoundText} \\text{ ${currentPracticeData.unit}}$ และขีดสเกลบน $x_{\\text{ขีดบน}} = ${upperBoundText} \\text{ ${currentPracticeData.unit}}$<br>
           คำนวณหาความคลาดเคลื่อนด้วยวิธีหาผลต่างสมบูรณ์ของสองสเกลล้อมรอบแล้วหารสอง:<br>
-          $$\\Delta x = \\frac{|x_{\\text{ขีดบน}} - x_{\\text{ขีดล่าง}}|}{2} = \\frac{|${upperBound.toFixed(dp)} - ${lowerBound.toFixed(dp)}|}{2} = \\frac{${resolution}}{2} = ${targetUnc} \\text{ ${currentPracticeData.unit}}$$<br>
+          $$\\Delta x = \\frac{|x_{\\text{ขีดบน}} - x_{\\text{ขีดล่าง}}|}{2} = \\frac{|${upperBoundText} - ${lowerBoundText}|}{2} = \\frac{${resolution}}{2} = ${targetUncText} \\text{ ${currentPracticeData.unit}}$$<br>
           <em>วิธีนี้ป้องกันการจำสับสนในกรณีเครื่องมือสเกลพิเศษได้ดีที่สุด</em></p>
           <p><strong>ขั้นตอนที่ 3: ปัดเลขและจัดตำแหน่งทศนิยม</strong><br>
           ${deltaRounding}<br>
           ${meanRounding}<br>
-          เนื่องจากความคลาดเคลื่อน $\\Delta x = ${targetUnc}$ มีตำแหน่งทศนิยม ${dp} ตำแหน่ง ค่ากลาง $x$ จึงต้องรายงานทศนิยมสอดคล้องกันที่ ${dp} ตำแหน่งด้วย นั่นคือ $${targetMean.toFixed(dp)}$</p>
-          <p class="font-bold text-slate-800 mt-2">รายงานคำตอบสุดท้ายสากลคือ: $${targetMean.toFixed(dp)} \\pm ${targetUnc} \\text{ ${currentPracticeData.unit}}$</p>
+          เนื่องจากความคลาดเคลื่อน $\\Delta x = ${targetUncText}$ มีตำแหน่งทศนิยม ${dp} ตำแหน่ง ค่ากลาง $x$ จึงต้องรายงานทศนิยมสอดคล้องกันที่ ${dp} ตำแหน่งด้วย นั่นคือ $${targetMeanText}$</p>
+          <p class="font-bold text-slate-800 mt-2">รายงานคำตอบสุดท้ายสากลคือ: $${targetMeanText} \\pm ${targetUncText} \\text{ ${currentPracticeData.unit}}$</p>
         `;
       } else {
         // Repeated measurement checking
         const sol = currentPracticeData.solution;
         
-        const meanClose = Math.abs(inputMean - sol.meanFinal) < 1e-9;
-        const uncClose = Math.abs(inputUnc - sol.deltaFinal) < 1e-9;
+        const meanClose = isNumericAnswerWithExactDecimals(inputMeanStr, sol.meanFinal, sol.decimalPlaces);
+        const uncClose = isNumericAnswerWithExactDecimals(inputUncStr, sol.deltaFinal, sol.decimalPlaces);
 
         isCorrect = meanClose && uncClose;
 
@@ -1816,20 +2187,24 @@
         }
         const deltaRounding = getRoundingExplanation(sol.deltaRaw, sol.deltaFinal, 'การปัดค่าความคลาดเคลื่อน', currentPracticeData.unit);
         const meanRounding = getRoundingExplanation(sol.meanRaw, sol.meanFinal, 'การปัดค่าเฉลี่ย', currentPracticeData.unit);
+        const meanRawText = formatHalfEven(sol.meanRaw, 4);
+        const deltaRawText = formatHalfEven(sol.deltaRaw, 4);
+        const meanFinalText = formatHalfEven(sol.meanFinal, sol.decimalPlaces);
+        const deltaFinalText = formatHalfEven(sol.deltaFinal, sol.decimalPlaces);
 
         detailedExplain = `
           <p><strong>1. คัดแยกข้อมูลที่ผิดปกติ (Outlier):</strong><br>${outlierText}</p>
           <p><strong>2. หาค่าเฉลี่ยกลาง ($\\bar{x}$):</strong><br>
-          $$\\bar{x} = \\frac{${sol.validData.join(' + ')}}{${sol.validData.length}} = ${sol.meanRaw.toFixed(4)}$$</p>
+          $$\\bar{x} = \\frac{${sol.validData.join(' + ')}}{${sol.validData.length}} = ${meanRawText}$$</p>
           <p><strong>3. หาความคลาดเคลื่อนดิบ ($\\Delta \\bar{x}$):</strong><br>
-          $$\\Delta \\bar{x}_{\\text{ดิบ}} = \\frac{${Math.max(...sol.validData)} (x_{\\max}) - ${Math.min(...sol.validData)} (x_{\\min})}{2} = ${sol.deltaRaw.toFixed(4)}$$</p>
+          $$\\Delta \\bar{x}_{\\text{ดิบ}} = \\frac{${Math.max(...sol.validData)} (x_{\\max}) - ${Math.min(...sol.validData)} (x_{\\min})}{2} = ${deltaRawText}$$</p>
           <p><strong>4. ปรับเลขนัยสำคัญ 1 ตัวที่ความคลาดเคลื่อน:</strong><br>
           ${deltaRounding}<br>
-          ดังนั้นค่าคลาดเคลื่อนสุดท้ายคือ <strong>$${sol.deltaFinal}$</strong> (ทศนิยม ${sol.decimalPlaces} ตำแหน่ง)</p>
+          ดังนั้นค่าคลาดเคลื่อนสุดท้ายคือ <strong>$${deltaFinalText}$</strong> (ทศนิยม ${sol.decimalPlaces} ตำแหน่ง)</p>
           <p><strong>5. ปรับตำแหน่งทศนิยมของค่าเฉลี่ยกลางให้เท่ากัน:</strong><br>
           ${meanRounding}<br>
-          ปัดค่าเฉลี่ยให้มีทศนิยม ${sol.decimalPlaces} ตำแหน่งสอดคล้องกับค่าความคลาดเคลื่อน $\\rightarrow$ <strong>$${sol.meanFinal.toFixed(sol.decimalPlaces)}$</strong></p>
-          <p class="font-bold text-slate-800 mt-2">คำตอบสากลสุดท้ายคือ: $${sol.meanFinal.toFixed(sol.decimalPlaces)} \\pm ${sol.deltaFinal} \\text{ ${currentPracticeData.unit}}$</p>
+          ปัดค่าเฉลี่ยให้มีทศนิยม ${sol.decimalPlaces} ตำแหน่งสอดคล้องกับค่าความคลาดเคลื่อน $\\rightarrow$ <strong>$${meanFinalText}$</strong></p>
+          <p class="font-bold text-slate-800 mt-2">คำตอบสากลสุดท้ายคือ: $${meanFinalText} \\pm ${deltaFinalText} \\text{ ${currentPracticeData.unit}}$</p>
         `;
       }
 
@@ -1850,7 +2225,7 @@
             <i class="fa-solid fa-circle-xmark text-xl text-rose-500"></i>
             <span>ยังไม่ถูกต้องนะเกลอ! ลองวิเคราะห์วิธีคิดด้านล่างนี้</span>
           </div>
-          <p class="text-xs text-rose-700">ตรวจสอบดูว่าได้จำกัด Outliers และทำความคลาดเคลื่อนด้วยสเกลที่คร่อมล้อมรอบค่าจริงแล้วหรือยัง</p>
+          <p class="text-xs text-rose-700">ตรวจสอบทั้งค่าตัวเลขและจำนวนตำแหน่งทศนิยมด้วยนะครับ เช่น เฉลย $14.0 \\pm 0.1$ ต้องตอบ $14.0$ ไม่ใช่ $14$ หรือ $14.0000$</p>
         `;
       }
 
@@ -1894,35 +2269,7 @@
       document.getElementById('exam-q1-unc').value = '';
       document.getElementById('exam-q2-mean').value = '';
       document.getElementById('exam-q2-unc').value = '';
-
-      // Set and Start Timer
-      examTimeRemaining = 300; // Reset to 5 mins
-      document.getElementById('exam-timer-display').innerText = "05:00";
-      document.getElementById('exam-timer-display').classList.remove('text-rose-500');
-
-      // Clear any running interval
-      clearInterval(examTimerInterval);
-      
-      examTimerInterval = setInterval(() => {
-        examTimeRemaining--;
-        if (examTimeRemaining <= 0) {
-          clearInterval(examTimerInterval);
-          examTimeRemaining = 0;
-          document.getElementById('exam-timer-display').innerText = "00:00";
-          triggerAlert("หมดเวลาแล้ว!", "เวลาสอบ 5 นาทีของคุณได้สิ้นสุดลงแล้ว ระบบจะส่งข้อสอบและสรุปประเมินให้ทันทีอัตโนมัติ", "fa-hourglass-end", "bg-rose-100 text-rose-600");
-          submitExam();
-        } else {
-          // Format minutes and seconds
-          const m = Math.floor(examTimeRemaining / 60).toString().padStart(2, '0');
-          const s = (examTimeRemaining % 60).toString().padStart(2, '0');
-          document.getElementById('exam-timer-display').innerText = `${m}:${s}`;
-          
-          if (examTimeRemaining < 60) {
-            document.getElementById('exam-timer-display').classList.add('text-rose-500');
-          }
-        }
-      }, 1000);
-
+      initializeExamSession(currentExamData, examStudentInfo);
       showSection('exam-live');
     }
 
@@ -1943,34 +2290,49 @@
       }
     }
 
-    function submitExam() {
+    function submitExam(timeExpired = false) {
+      if (examSubmissionInProgress) return;
+      examSubmissionInProgress = true;
       clearInterval(examTimerInterval);
 
-      // Extract user values
-      const q1_user_mean = parseFloat(document.getElementById('exam-q1-mean').value.trim()) || 0;
-      const q1_user_unc = parseFloat(document.getElementById('exam-q1-unc').value.trim()) || 0;
-      const q2_user_mean = parseFloat(document.getElementById('exam-q2-mean').value.trim()) || 0;
-      const q2_user_unc = parseFloat(document.getElementById('exam-q2-unc').value.trim()) || 0;
+      if (!currentExamData) {
+        endExamSession();
+        triggerAlert("ไม่พบชุดข้อสอบ", "ระบบไม่พบข้อมูลข้อสอบที่กำลังทำอยู่ กรุณาเริ่มสอบใหม่อีกครั้ง", "fa-triangle-exclamation", "bg-rose-100 text-rose-600");
+        showSection('exam-start');
+        return;
+      }
+
+      // Extract user answer strings so significant decimal places are graded too.
+      const q1_user_mean_str = document.getElementById('exam-q1-mean').value.trim();
+      const q1_user_unc_str = document.getElementById('exam-q1-unc').value.trim();
+      const q2_user_mean_str = document.getElementById('exam-q2-mean').value.trim();
+      const q2_user_unc_str = document.getElementById('exam-q2-unc').value.trim();
 
       // Grade Q1 (2 Pts)
       const q1_target_mean = currentExamData.q1.measuredValue;
       const q1_target_unc = currentExamData.q1.deltaX;
-      const q1_mean_correct = isSingleMeanAcceptable(q1_user_mean, currentExamData.q1);
-      const q1_unc_correct = Math.abs(q1_user_unc - q1_target_unc) < 1e-9;
+      const q1_required_dp = getDecimalPlaces(q1_target_unc);
+      const q1_mean_correct = isSingleMeanAnswerCorrect(q1_user_mean_str, currentExamData.q1);
+      const q1_unc_correct = isNumericAnswerWithExactDecimals(q1_user_unc_str, q1_target_unc, q1_required_dp);
       const q1_correct = q1_mean_correct && q1_unc_correct;
       const q1_score = q1_correct ? 2.0 : 0.0;
 
       // Grade Q2 (3 Pts)
       const q2_sol = currentExamData.q2.solution;
-      const q2_correct = (Math.abs(q2_user_mean - q2_sol.meanFinal) < 1e-9) && (Math.abs(q2_user_unc - q2_sol.deltaFinal) < 1e-9);
+      const q2_mean_correct = isNumericAnswerWithExactDecimals(q2_user_mean_str, q2_sol.meanFinal, q2_sol.decimalPlaces);
+      const q2_unc_correct = isNumericAnswerWithExactDecimals(q2_user_unc_str, q2_sol.deltaFinal, q2_sol.decimalPlaces);
+      const q2_correct = q2_mean_correct && q2_unc_correct;
       const q2_score = q2_correct ? 3.0 : 0.0;
 
       const total_score = q1_score + q2_score;
-      const time_taken_sec = 300 - examTimeRemaining;
+      examTimeRemaining = Math.max(0, getCurrentExamRemainingSeconds());
+      const time_taken_sec = timeExpired ? EXAM_DURATION_SECONDS : Math.min(EXAM_DURATION_SECONDS, EXAM_DURATION_SECONDS - examTimeRemaining);
       
       const m = Math.floor(time_taken_sec / 60);
       const s = time_taken_sec % 60;
       const time_taken_str = `${m} นาที ${s} วินาที`;
+      const finishedAt = new Date();
+      const finishedAtDisplay = formatThaiDateTimeBuddhistEra(finishedAt);
 
       // Save to local storage for persistence
       const examResultsToSave = {
@@ -1978,23 +2340,27 @@
         q1Correct: q1_correct,
         q2Correct: q2_correct,
         timeTaken: time_taken_str,
+        finishedAt: finishedAt.toISOString(),
+        finishedAtDisplay: finishedAtDisplay,
         studentInfo: examStudentInfo,
         examData: currentExamData,
-        date: new Date().toLocaleDateString('th-TH')
+        date: finishedAt.toLocaleDateString('th-TH-u-ca-buddhist')
       };
       localStorage.setItem('last_exam_results', JSON.stringify(examResultsToSave));
+      endExamSession();
 
       // Show Results
       showSection('exam-result');
-      displayExamResults(total_score, q1_correct, q2_correct, time_taken_str, examStudentInfo);
+      displayExamResults(total_score, q1_correct, q2_correct, time_taken_str, examStudentInfo, finishedAtDisplay);
       updateLatestScoreOnHome();
     }
 
-    function displayExamResults(score, q1Correct, q2Correct, timeTaken, studentInfo) {
+    function displayExamResults(score, q1Correct, q2Correct, timeTaken, studentInfo, finishedAtDisplay = '-') {
       // Set student display
       document.getElementById('lbl-res-student-name').innerText = studentInfo.name;
       document.getElementById('lbl-res-student-meta').innerText = `ชั้น ม.4/${studentInfo.class} เลขที่ ${studentInfo.number}`;
       document.getElementById('lbl-res-time-elapsed').innerText = `ใช้เวลาไปทั้งหมด: ${timeTaken}`;
+      document.getElementById('lbl-res-finished-at').innerText = `ส่งข้อสอบเมื่อ: ${finishedAtDisplay}`;
       
       // Update circle progress
       const percent = (score / 5) * 100;
@@ -2068,23 +2434,30 @@
       const { lower: lowerBound, upper: upperBound } = getSingleMeasurementBounds(q1);
       const tolerance = getSingleMeanTolerance(q1);
       const deltaRounding = getRoundingExplanation(resolution / 2, targetUnc, 'การปัดค่าความคลาดเคลื่อน', q1.unit);
-      const meanRounding = getRoundingExplanation(q1.rawMeasuredValue || targetMean, parseFloat(targetMean.toFixed(dp)), 'การปัดค่าที่อ่านได้', q1.unit);
+      const meanRounding = getRoundingExplanation(q1.rawMeasuredValue || targetMean, roundHalfEven(targetMean, dp), 'การปัดค่าที่อ่านได้', q1.unit);
+      const targetMeanText = formatHalfEven(targetMean, dp);
+      const targetUncText = formatHalfEven(targetUnc, dp);
+      const lowerBoundText = formatHalfEven(lowerBound, dp);
+      const upperBoundText = formatHalfEven(upperBound, dp);
+      const minAcceptedText = formatHalfEven(targetMean - tolerance, dp);
+      const maxAcceptedText = formatHalfEven(targetMean + tolerance, dp);
+      const measuredRawText = formatHalfEven(getSingleMeasurementReferenceValue(q1), Math.max(dp, 2));
 
       document.getElementById('lbl-exam-sol-q1-text').innerText = `ภาพข้อสอบแสดงปลายวัตถุบนสเกล หน่วย ${q1.unit}`;
       document.getElementById('lbl-exam-sol-q1-detail').innerHTML = `
         <p><strong>ขั้นตอนที่ 1: อ่านค่ากลาง ($x$)</strong><br>
-        ปลายวัตถุอยู่ระหว่างขีด $${lowerBound.toFixed(dp)}$ และ $${upperBound.toFixed(dp)} \\text{ ${q1.unit}}$ จึงต้องกะประมาณด้วยสายตา ได้ค่ามาตรฐานประมาณ $x = ${targetMean.toFixed(dp)} \\text{ ${q1.unit}}$<br>
-        ในการตรวจคำตอบ ระบบยอมรับค่ากะประมาณที่สมเหตุสมผลในช่วง ${(targetMean - tolerance).toFixed(dp)} ถึง ${(targetMean + tolerance).toFixed(dp)} ${q1.unit} แต่ค่าความคลาดเคลื่อนต้องตรงตามสเกลของเครื่องมือ</p>
+        ปลายวัตถุอยู่ระหว่างขีด $${lowerBoundText}$ และ $${upperBoundText} \\text{ ${q1.unit}}$ โดยตำแหน่งจริงบนภาพอยู่ประมาณ $${measuredRawText} \\text{ ${q1.unit}}$ เมื่อนำไปรายงานตามตำแหน่งทศนิยมที่สอดคล้องกัน จะได้ $x = ${targetMeanText} \\text{ ${q1.unit}}$<br>
+        ในการตรวจคำตอบ ระบบยอมรับค่ากะประมาณที่สมเหตุสมผลในช่วง ${minAcceptedText} ถึง ${maxAcceptedText} ${q1.unit} แต่ค่าความคลาดเคลื่อนต้องตรงตามสเกลของเครื่องมือ</p>
         <p><strong>ขั้นตอนที่ 2: หาความคลาดเคลื่อน ($\\Delta x$) จากสองขีดสเกลที่ขนาบคร่อมตัววัตถุอยู่</strong><br>
-        ค่าจริง $${targetMean}$ ตกอยู่ระหว่างขีดล่าง $x_{\\text{ขีดล่าง}} = ${lowerBound.toFixed(dp)} \\text{ ${q1.unit}}$ และขีดบน $x_{\\text{ขีดบน}} = ${upperBound.toFixed(dp)} \\text{ ${q1.unit}}$<br>
+        ปลายวัตถุจริง $${measuredRawText}$ ตกอยู่ระหว่างขีดล่าง $x_{\\text{ขีดล่าง}} = ${lowerBoundText} \\text{ ${q1.unit}}$ และขีดบน $x_{\\text{ขีดบน}} = ${upperBoundText} \\text{ ${q1.unit}}$<br>
         คำนวณหาความคลาดเคลื่อน:<br>
-        $$\\Delta x = \\frac{|x_{\\text{ขีดบน}} - x_{\\text{ขีดล่าง}}|}{2} = \\frac{|${upperBound.toFixed(dp)} - ${lowerBound.toFixed(dp)}|}{2} = \\frac{${resolution}}{2} = ${targetUnc} \\text{ ${q1.unit}}$$<br>
+        $$\\Delta x = \\frac{|x_{\\text{ขีดบน}} - x_{\\text{ขีดล่าง}}|}{2} = \\frac{|${upperBoundText} - ${lowerBoundText}|}{2} = \\frac{${resolution}}{2} = ${targetUncText} \\text{ ${q1.unit}}$$<br>
         <em>วิธีคิดผลต่างสเกลคร่อมล้อมรอบช่วยเลี่ยงข้อผิดพลาดในกรณีเครื่องมือสเกลพิเศษได้ดีที่สุด</em></p>
         <p><strong>ขั้นตอนที่ 3: ปัดเลขและรายงานผลสากล</strong><br>
         ${deltaRounding}<br>
         ${meanRounding}<br>
-        ค่า $\\Delta x = ${targetUnc}$ มีทศนิยม ${dp} ตำแหน่ง ดังนั้นตัวเลขค่ากลางต้องรายงานเป็นทศนิยม ${dp} ตำแหน่งเท่ากันพอดีด้วย</p>
-        <p class="font-bold text-slate-800">คำตอบที่ถูกต้องคือ: ${targetMean.toFixed(dp)} $\\pm$ ${targetUnc} ${q1.unit}</p>
+        ค่า $\\Delta x = ${targetUncText}$ มีทศนิยม ${dp} ตำแหน่ง ดังนั้นตัวเลขค่ากลางต้องรายงานเป็นทศนิยม ${dp} ตำแหน่งเท่ากันพอดีด้วย</p>
+        <p class="font-bold text-slate-800">คำตอบที่ถูกต้องคือ: ${targetMeanText} $\\pm$ ${targetUncText} ${q1.unit}</p>
       `;
 
       // Inject details for exam Q2 solution
@@ -2100,20 +2473,24 @@
       }
       const q2DeltaRounding = getRoundingExplanation(sol.deltaRaw, sol.deltaFinal, 'การปัดค่าความคลาดเคลื่อน', q2.unit);
       const q2MeanRounding = getRoundingExplanation(sol.meanRaw, sol.meanFinal, 'การปัดค่าเฉลี่ย', q2.unit);
+      const meanRawText = formatHalfEven(sol.meanRaw, 4);
+      const deltaRawText = formatHalfEven(sol.deltaRaw, 4);
+      const meanFinalText = formatHalfEven(sol.meanFinal, sol.decimalPlaces);
+      const deltaFinalText = formatHalfEven(sol.deltaFinal, sol.decimalPlaces);
 
       document.getElementById('lbl-exam-sol-q2-detail').innerHTML = `
         <p><strong>1. การคัดกรองข้อมูล:</strong><br>${outlierText}</p>
         <p><strong>2. หาค่าเฉลี่ยดิบ ($\\bar{x}$):</strong><br>
-        $$\\bar{x} = \\frac{${sol.validData.join(' + ')}}{${sol.validData.length}} = ${sol.meanRaw.toFixed(4)} \\text{ ${q2.unit}}$$</p>
+        $$\\bar{x} = \\frac{${sol.validData.join(' + ')}}{${sol.validData.length}} = ${meanRawText} \\text{ ${q2.unit}}$$</p>
         <p><strong>3. หาความคลาดเคลื่อนดิบ ($\\Delta \\bar{x}$):</strong><br>
-        $$\\Delta \\bar{x} = \\frac{${Math.max(...sol.validData)} (x_{\\max}) - ${Math.min(...sol.validData)} (x_{\\min})}{2} = ${sol.deltaRaw.toFixed(4)}$$</p>
+        $$\\Delta \\bar{x} = \\frac{${Math.max(...sol.validData)} (x_{\\max}) - ${Math.min(...sol.validData)} (x_{\\min})}{2} = ${deltaRawText}$$</p>
         <p><strong>4. ปรับเลขนัยสำคัญ 1 ตัวที่ความคลาดเคลื่อน:</strong><br>
         ${q2DeltaRounding}<br>
-        ได้ค่าคลาดเคลื่อนสุดท้ายเป็น <strong>$${sol.deltaFinal}$</strong> (ทศนิยม ${sol.decimalPlaces} ตำแหน่ง)</p>
+        ได้ค่าคลาดเคลื่อนสุดท้ายเป็น <strong>$${deltaFinalText}$</strong> (ทศนิยม ${sol.decimalPlaces} ตำแหน่ง)</p>
         <p><strong>5. จัดทศนิยมให้สอดคล้องกัน:</strong><br>
         ${q2MeanRounding}<br>
-        ปัดค่ากลาง $\\bar{x}$ ให้สอดคล้องกันเป็นทศนิยม ${sol.decimalPlaces} ตำแหน่ง $\\rightarrow$ <strong>$${sol.meanFinal.toFixed(sol.decimalPlaces)}$</strong></p>
-        <p class="font-bold text-slate-800">คำตอบสุดท้ายคือ: ${sol.meanFinal.toFixed(sol.decimalPlaces)} $\\pm$ ${sol.deltaFinal} ${q2.unit}</p>
+        ปัดค่ากลาง $\\bar{x}$ ให้สอดคล้องกันเป็นทศนิยม ${sol.decimalPlaces} ตำแหน่ง $\\rightarrow$ <strong>$${meanFinalText}$</strong></p>
+        <p class="font-bold text-slate-800">คำตอบสุดท้ายคือ: ${meanFinalText} $\\pm$ ${deltaFinalText} ${q2.unit}</p>
       `;
 
       renderMath();
